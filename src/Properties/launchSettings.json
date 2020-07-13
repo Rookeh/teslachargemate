@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TeslaChargeMate": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

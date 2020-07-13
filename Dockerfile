@@ -3,9 +3,9 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
-COPY ["TeslaChargeMate.csproj", ""]
+COPY ["src/TeslaChargeMate.csproj", ""]
 RUN dotnet restore "./TeslaChargeMate.csproj"
-COPY . .
+COPY src/. .
 WORKDIR "/src/."
 RUN dotnet build "TeslaChargeMate.csproj" -c Release -o /app/build
 

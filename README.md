@@ -1,5 +1,5 @@
 # teslachargemate
-An add-on worker service for the [TeslaMate](https://github.com/adriankumpf/teslamate) project which automatically updates the energy cost associated with a geofence, based on the time of day. Written in C# on .NET Core.
+An add-on worker service for the [TeslaMate](https://github.com/adriankumpf/teslamate) project which automatically updates the energy cost associated with a geofence, based on the time of day.
 
 This may be useful for TeslaMate users on [Economy 7](https://en.wikipedia.org/wiki/Economy_7) or similar variable-rate energy tariffs, to accurately record the cost of charging sessions.
 

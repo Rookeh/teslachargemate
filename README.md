@@ -1,5 +1,5 @@
 # teslachargemate
-An add-on worker service for the [TeslaMate](https://github.com/adriankumpf/teslamate) project which automatically updates the energy cost associated with a geofence, based on the time of day.
+An add-on worker service for the [TeslaMate](https://github.com/adriankumpf/teslamate) project which automatically updates the energy cost associated with a geofence, based on the time of day. Written in C# on .NET Core.
 
 This may be useful for TeslaMate users on [Economy 7](https://en.wikipedia.org/wiki/Economy_7) or similar variable-rate energy tariffs, to accurately record the cost of charging sessions.
 
@@ -22,6 +22,6 @@ The following environment variables must be populated:
 | `TCM_DATABASE_PASSWORD`  | `password`          | Password for the above user                       |
 | `TCM_GEOFENCE_ID`        | `1`                 | ID of the geofence that should be updated         |
 | `TCM_DAY_RATE`           | `0.14`              | Daytime energy tariff cost (per kWh)              |
-| `TCM_NIGHT_RATE`         | `0.05`              | Nighttime energy tariff cost (per kWh)            |
+| `TCM_NIGHT_RATE`         | `0.05`              | Overnight energy tariff cost (per kWh)            |
 | `TCM_DAY_START`          | `04:30:00`          | The time of day your daytime tariff rate begins   |
-| `TCM_NIGHT_START`        | `00:30:00`          | The time of day your nighttime tariff rate begins |
+| `TCM_NIGHT_START`        | `00:30:00`          | The time of day your overnight tariff rate begins |

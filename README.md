@@ -28,8 +28,8 @@ The following environment variables must be populated:
 
 The following environment variables are optional:
 
-| Name                     | Example Value       | Notes                                                                          |
-|:------------------------:|:-------------------:|--------------------------------------------------------------------------------|
-| `TCM_DATABASE_RETRIES`   | `3`                 | Number of times to retry setting charge rate in case of DB connectivity issues |
-| `TCM_DATABASE_WAIT`      | `5`                 | Seconds to wait between retry attempts.                                        |
-| `TZ`                     | `Europe/London`     | Your timezone (this may need to be set to ensure rates change when expected)   |
+| Name                     | Example Value       | Notes                                                                                                          |
+|:------------------------:|:-------------------:|----------------------------------------------------------------------------------------------------------------|
+| `TCM_DATABASE_RETRIES`   | `3`                 | Number of times to retry setting charge rate in case of DB connectivity issues (will not retry if not defined) |
+| `TCM_DATABASE_WAIT`      | `5`                 | Seconds to wait between retry attempts (will not wait if not defined)                                          |
+| `TZ`                     | `Europe/London`     | Your timezone (this may need to be set to ensure rates change when expected)                                   |

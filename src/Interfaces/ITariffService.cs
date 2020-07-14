@@ -2,6 +2,6 @@
 {
     public interface ITariffService
     {
-        void UpdateRate();
+        void UpdateRate(int attempts = 1);
     }
 }

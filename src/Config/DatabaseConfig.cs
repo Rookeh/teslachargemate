@@ -5,18 +5,24 @@ namespace TeslaChargeMate.Config
     public class DatabaseConfig : IConfigSection
     {
         [EnvironmentVariableName("DATABASE_NAME")]
-        public string DatabaseName { get; set; }
+        public virtual string DatabaseName { get; set; }
 
         [EnvironmentVariableName("DATABASE_HOST")]
-        public string DatabaseHost { get; set; }
+        public virtual string DatabaseHost { get; set; }
 
         [EnvironmentVariableName("DATABASE_PORT")]
-        public int DatabasePort { get; set; }
+        public virtual int DatabasePort { get; set; }
 
         [EnvironmentVariableName("DATABASE_USER")]
-        public string DatabaseUser { get; set; }
+        public virtual string DatabaseUser { get; set; }
 
         [EnvironmentVariableName("DATABASE_PASSWORD")]
-        public string DatabasePassword { get; set; }
+        public virtual string DatabasePassword { get; set; }
+
+        [EnvironmentVariableName("DATABASE_WAIT")]
+        public virtual int DatabaseWait { get; set; }
+
+        [EnvironmentVariableName("DATABASE_RETRIES")]
+        public virtual int DatabaseRetries { get; set; }
     }
 }

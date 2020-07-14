@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
+using System.Threading;
 using TeslaChargeMate.Config;
 using TeslaChargeMate.Interfaces;
 
@@ -7,22 +9,41 @@ namespace TeslaChargeMate.Services
 {
     public class TariffService : ITariffService
     {
-        private TariffConfig _config;
+        private TariffConfig _tariffConfig;
+        private DatabaseConfig _dbConfig;
         private readonly ILogger<TariffService> _logger;
         private readonly ITeslaMateRepository _repository;
 
         public TariffService(IConfigProvider configProvider, ILogger<TariffService> logger, ITeslaMateRepository repository)
         {
-            _config = configProvider.Get<TariffConfig>();
+            _dbConfig = configProvider.Get<DatabaseConfig>();
+            _tariffConfig = configProvider.Get<TariffConfig>();
             _logger = logger;
             _repository = repository;
         }
 
-        public void UpdateRate()
+        public void UpdateRate(int attempts = 1)
         {
-            var rate = GetRate(_config.DayStart, _config.NightStart);
+            var rate = GetRate(_tariffConfig.DayStart, _tariffConfig.NightStart);
             _logger.LogInformation($"Updating tariff to {rate}");
-            _repository.UpdateChargeRate(_config.GeofenceId, rate == TariffRate.Day ? _config.DayRate : _config.NightRate);
+
+            try
+            {
+                _repository.UpdateChargeRate(_tariffConfig.GeofenceId, rate == TariffRate.Day ? _tariffConfig.DayRate : _tariffConfig.NightRate);
+            }
+            catch (NpgsqlException ex)
+            {
+                _logger.LogWarning($"Failed to update tariff: {ex.Message}. Retries remaining: {_dbConfig.DatabaseRetries - attempts}");                
+                if (_dbConfig.DatabaseRetries - attempts > 0)
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(_dbConfig.DatabaseWait));
+                    UpdateRate(attempts + 1);
+                }
+                else
+                {
+                    _logger.LogError($"Failed to update tariff after {_dbConfig.DatabaseRetries} attempts. No further attempts will be made.");
+                }
+            }
         }
 
         private enum TariffRate

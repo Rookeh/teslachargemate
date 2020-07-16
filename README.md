@@ -25,3 +25,11 @@ The following environment variables must be populated:
 | `TCM_NIGHT_RATE`         | `0.05`              | Overnight energy tariff cost (per kWh)            |
 | `TCM_DAY_START`          | `04:30:00`          | The time of day your daytime tariff rate begins   |
 | `TCM_NIGHT_START`        | `00:30:00`          | The time of day your overnight tariff rate begins |
+
+The following environment variables are optional:
+
+| Name                     | Example Value       | Notes                                                                                                          |
+|:------------------------:|:-------------------:|----------------------------------------------------------------------------------------------------------------|
+| `TCM_DATABASE_RETRIES`   | `3`                 | Number of times to retry setting charge rate in case of DB connectivity issues (will not retry if not defined) |
+| `TCM_DATABASE_WAIT`      | `5`                 | Seconds to wait between retry attempts (will not wait if not defined)                                          |
+| `TZ`                     | `Europe/London`     | Your timezone (this may need to be set to ensure rates change when expected)                                   |

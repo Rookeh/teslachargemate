@@ -12,14 +12,16 @@ namespace TeslaChargeMate.Services
     public class TimerService : BackgroundService
     {
         private readonly TimerConfig _config;
+        private readonly IDateTimeWrapper _dateTimeWrapper;
         private readonly ILogger<TimerService> _logger;
         private readonly ITariffService _tariffService;        
 
         private Timer _timer;
 
-        public TimerService(IConfigProvider configProvider, ILogger<TimerService> logger, ITariffService tariffService)
+        public TimerService(IConfigProvider configProvider, IDateTimeWrapper dateTimeWrapper, ILogger<TimerService> logger, ITariffService tariffService)
         {
             _config = configProvider.Get<TimerConfig>();
+            _dateTimeWrapper = dateTimeWrapper;
             _logger = logger;
             _tariffService = tariffService;
         }
@@ -38,22 +40,22 @@ namespace TeslaChargeMate.Services
 
         private TimeSpan GetNextTime(TimeSpan dayStart, TimeSpan nightStart)
         {
-            var dayStartTime = DateTime.Today.Add(dayStart);
-            var nightStartTime = DateTime.Today.Add(nightStart);
+            var dayStartTime = _dateTimeWrapper.Today.Add(dayStart);
+            var nightStartTime = _dateTimeWrapper.Today.Add(nightStart);
 
-            if (dayStartTime < DateTime.Now)
+            if (dayStartTime < _dateTimeWrapper.Now)
             {
                 dayStartTime = dayStartTime.AddDays(1);
             }
 
-            if (nightStartTime < DateTime.Now)
+            if (nightStartTime < _dateTimeWrapper.Now)
             {
                 nightStartTime = nightStartTime.AddDays(1);
             }
 
             var rateChangeDate = new[] { dayStartTime, nightStartTime }.Min();
             _logger.LogInformation($"Next rate change at: {rateChangeDate}");
-            return rateChangeDate - DateTime.Now;
+            return rateChangeDate - _dateTimeWrapper.Now;
         }
     }
 }

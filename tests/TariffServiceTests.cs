@@ -12,6 +12,7 @@ namespace TeslaChargeMate.Tests
     public class TariffServiceTests
     {
         private Mock<IConfigProvider> _mockConfigProvider;
+        private Mock<IDateTimeWrapper> _mockDateTimeWrapper;
         private Mock<ILogger<TariffService>> _mockLogger;
         private Mock<ITeslaMateRepository> _mockRepository;
         private Mock<TariffConfig> _mockTariffConfig;
@@ -21,6 +22,7 @@ namespace TeslaChargeMate.Tests
 
         public TariffServiceTests()
         {
+            _mockDateTimeWrapper = new Mock<IDateTimeWrapper>();
             _mockDbConfig = new Mock<DatabaseConfig>();
             _mockTariffConfig = new Mock<TariffConfig>();
             _mockConfigProvider = new Mock<IConfigProvider>();
@@ -33,11 +35,18 @@ namespace TeslaChargeMate.Tests
             _mockConfigProvider.Setup(x => x.Get<TariffConfig>())
                 .Returns(_mockTariffConfig.Object);
 
-            _service = new TariffService(_mockConfigProvider.Object, _mockLogger.Object, _mockRepository.Object);
+            _service = new TariffService(_mockConfigProvider.Object, _mockDateTimeWrapper.Object,
+                _mockLogger.Object, _mockRepository.Object);
         }
 
-        [Fact]
-        public void UpdateRate_SetsCorrectRate_BasedOnTimeOfDay()
+        [Theory]
+        [InlineData(18, 00, false)]
+        [InlineData(00, 00, false)]
+        [InlineData(00, 30, true)]
+        [InlineData(03, 00, true)]
+        [InlineData(04, 30, false)]
+        [InlineData(08, 00, false)]
+        public void UpdateRate_SetsCorrectRate_BasedOnTimeOfDay(int hour, int minute, bool nightExpected)
         {
             // Arrange
             var dayRate = (float)0.14;
@@ -45,8 +54,15 @@ namespace TeslaChargeMate.Tests
             var dayStart = new TimeSpan(04, 30, 00);
             var nightStart = new TimeSpan(00, 30, 00);
             var currentTime = DateTime.Now - DateTime.Today;
-            var nightExpected = currentTime >= nightStart && currentTime < dayStart;
             var geoFenceId = 1;
+
+            _mockDateTimeWrapper.Setup(x => x.Now)
+                .Returns(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, hour, minute, 0))
+                .Verifiable();
+
+            _mockDateTimeWrapper.Setup(x => x.Today)
+                .Returns(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day))
+                .Verifiable();
 
             _mockTariffConfig.Setup(x => x.DayRate).Returns(dayRate);
             _mockTariffConfig.Setup(x => x.NightRate).Returns(nightRate);
@@ -75,6 +91,8 @@ namespace TeslaChargeMate.Tests
             var dbRetries = 2;
             var geoFenceId = 1;
 
+            _mockDateTimeWrapper.Setup(x => x.Now).Returns(DateTime.Now);
+            _mockDateTimeWrapper.Setup(x => x.Today).Returns(DateTime.Today);
             _mockDbConfig.Setup(x => x.DatabaseWait).Returns(dbWait);
             _mockDbConfig.Setup(x => x.DatabaseRetries).Returns(dbRetries);
             _mockTariffConfig.Setup(x => x.DayRate).Returns(dayRate);
@@ -90,7 +108,7 @@ namespace TeslaChargeMate.Tests
             _service.UpdateRate();
 
             // Assert
-            _mockRepository.Verify(x => x.UpdateChargeRate(geoFenceId, nightExpected ? nightRate : dayRate), Times.Exactly(2));
+            _mockRepository.Verify(x => x.UpdateChargeRate(It.IsAny<int>(), It.IsAny<float>()), Times.Exactly(2));
         }
 
         [Fact]
@@ -107,6 +125,8 @@ namespace TeslaChargeMate.Tests
             var dbRetries = 5;
             var geoFenceId = 1;
 
+            _mockDateTimeWrapper.Setup(x => x.Now).Returns(DateTime.Now);
+            _mockDateTimeWrapper.Setup(x => x.Today).Returns(DateTime.Today);
             _mockDbConfig.Setup(x => x.DatabaseWait).Returns(dbWait);
             _mockDbConfig.Setup(x => x.DatabaseRetries).Returns(dbRetries);
             _mockTariffConfig.Setup(x => x.DayRate).Returns(dayRate);
@@ -126,7 +146,7 @@ namespace TeslaChargeMate.Tests
             _service.UpdateRate();
 
             // Assert
-            _mockRepository.Verify(x => x.UpdateChargeRate(geoFenceId, nightExpected ? nightRate : dayRate), Times.Exactly(5));
+            _mockRepository.Verify(x => x.UpdateChargeRate(It.IsAny<int>(), It.IsAny<float>()), Times.Exactly(5));
         }
     }
 }

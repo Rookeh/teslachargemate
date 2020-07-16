@@ -11,13 +11,15 @@ namespace TeslaChargeMate.Services
     {
         private TariffConfig _tariffConfig;
         private DatabaseConfig _dbConfig;
+        private readonly IDateTimeWrapper _dateTimeWrapper;
         private readonly ILogger<TariffService> _logger;
         private readonly ITeslaMateRepository _repository;
 
-        public TariffService(IConfigProvider configProvider, ILogger<TariffService> logger, ITeslaMateRepository repository)
+        public TariffService(IConfigProvider configProvider, IDateTimeWrapper dateTimeWrapper, ILogger<TariffService> logger, ITeslaMateRepository repository)
         {
             _dbConfig = configProvider.Get<DatabaseConfig>();
             _tariffConfig = configProvider.Get<TariffConfig>();
+            _dateTimeWrapper = dateTimeWrapper;
             _logger = logger;
             _repository = repository;
         }
@@ -54,9 +56,9 @@ namespace TeslaChargeMate.Services
 
         private TariffRate GetRate(TimeSpan dayStart, TimeSpan nightStart)
         {
-            var dayRateTime = DateTime.Today.Add(dayStart);
-            var nightRateTime = DateTime.Today.Add(nightStart);
-            var now = DateTime.Now;
+            var dayRateTime = _dateTimeWrapper.Today.Add(dayStart);
+            var nightRateTime = _dateTimeWrapper.Today.Add(nightStart);
+            var now = _dateTimeWrapper.Now;
             if (now >= nightRateTime && now < dayRateTime)
             {
                 return TariffRate.Night;

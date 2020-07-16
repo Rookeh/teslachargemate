@@ -55,7 +55,7 @@ namespace TeslaChargeMate.Services
 
             var rateChangeDate = new[] { dayStartTime, nightStartTime }.Min();
             _logger.LogInformation($"Next rate change at: {rateChangeDate}");
-            return rateChangeDate - _dateTimeWrapper.Now;
+            return (rateChangeDate - _dateTimeWrapper.Now).Add(new TimeSpan(0, 0, 5));
         }
     }
 }

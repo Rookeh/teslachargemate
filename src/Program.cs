@@ -5,6 +5,7 @@ using TeslaChargeMate.Config;
 using TeslaChargeMate.Data;
 using TeslaChargeMate.Interfaces;
 using TeslaChargeMate.Services;
+using TeslaChargeMate.Wrappers;
 
 namespace TeslaChargeMate
 {
@@ -25,6 +26,7 @@ namespace TeslaChargeMate
                 {
                     services.AddSingleton(hostContext.Configuration);
                     services.AddSingleton<IConfigProvider, ConfigProvider>();
+                    services.AddSingleton<IDateTimeWrapper, DateTimeWrapper>();
                     services.AddSingleton<ITeslaMateRepository, TeslaMateRepository>();
                     services.AddSingleton<ITariffService, TariffService>();
                     services.AddHostedService<TimerService>();

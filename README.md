@@ -7,7 +7,7 @@ This may be useful for TeslaMate users on [Economy 7](https://en.wikipedia.org/w
 
 Simply build and run on your desired platform.
 
-Ideally, use the included Dockerfile to deploy in the same environment as your TeslaMate installation.
+Alternatively, grab the latest image from the releases page and deploy in the same environment as your TeslaMate installation.
 
 ## Requirements
 

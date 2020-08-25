@@ -3,6 +3,8 @@ using Npgsql;
 using System;
 using System.Threading;
 using TeslaChargeMate.Config;
+using TeslaChargeMate.Data;
+using TeslaChargeMate.Helpers;
 using TeslaChargeMate.Interfaces;
 
 namespace TeslaChargeMate.Services
@@ -26,7 +28,8 @@ namespace TeslaChargeMate.Services
 
         public void UpdateRate(int attempts = 1)
         {
-            var rate = GetRate(_tariffConfig.DayStart, _tariffConfig.NightStart);
+            var rate = DateTimeHelper.GetRate(_tariffConfig.DayStart, _tariffConfig.NightStart, _dateTimeWrapper.Now.TimeOfDay);
+
             _logger.LogInformation($"Updating tariff to {rate}");
 
             try
@@ -46,27 +49,6 @@ namespace TeslaChargeMate.Services
                     _logger.LogError($"Failed to update tariff after {_dbConfig.DatabaseRetries} attempts. No further attempts will be made.");
                 }
             }
-        }
-
-        private enum TariffRate
-        {
-            Day,
-            Night
-        }
-
-        private TariffRate GetRate(TimeSpan dayStart, TimeSpan nightStart)
-        {
-            var dayRateTime = _dateTimeWrapper.Today.Add(dayStart);
-            var nightRateTime = _dateTimeWrapper.Today.Add(nightStart);
-            var now = _dateTimeWrapper.Now;
-            if (now >= nightRateTime && now < dayRateTime)
-            {
-                return TariffRate.Night;
-            }
-            else
-            {
-                return TariffRate.Day;
-            }
-        }
+        }        
     }
 }

@@ -1,10 +1,10 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeslaChargeMate.Config;
+using TeslaChargeMate.Helpers;
 using TeslaChargeMate.Interfaces;
 
 namespace TeslaChargeMate.Services
@@ -40,20 +40,7 @@ namespace TeslaChargeMate.Services
 
         private TimeSpan GetNextTime(TimeSpan dayStart, TimeSpan nightStart)
         {
-            var dayStartTime = _dateTimeWrapper.Today.Add(dayStart);
-            var nightStartTime = _dateTimeWrapper.Today.Add(nightStart);
-
-            if (dayStartTime < _dateTimeWrapper.Now)
-            {
-                dayStartTime = dayStartTime.AddDays(1);
-            }
-
-            if (nightStartTime < _dateTimeWrapper.Now)
-            {
-                nightStartTime = nightStartTime.AddDays(1);
-            }
-
-            var rateChangeDate = new[] { dayStartTime, nightStartTime }.Min();
+            var rateChangeDate = DateTimeHelper.GetNextRateChange(dayStart, nightStart, _dateTimeWrapper.Now.TimeOfDay);
             _logger.LogInformation($"Next rate change at: {rateChangeDate}");
             return (rateChangeDate - _dateTimeWrapper.Now).Add(new TimeSpan(0, 0, 5));
         }

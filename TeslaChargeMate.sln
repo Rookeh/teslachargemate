@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeslaChargeMate", "src\TeslaChargeMate.csproj", "{AD576376-0FDF-4905-B3CB-397E2A017138}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeslaChargeMate.Tests", "tests\TeslaChargeMate.Tests.csproj", "{A3FB81A4-2037-4C16-8B7E-BDA9D2788F98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeslaChargeMate.Tests", "tests\TeslaChargeMate.Tests.csproj", "{A3FB81A4-2037-4C16-8B7E-BDA9D2788F98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
